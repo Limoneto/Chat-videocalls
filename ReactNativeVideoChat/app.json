@@ -1,0 +1,32 @@
+{
+  "name": "Instamobile",
+  "displayName": "Instamobile",
+  "plugins": [
+    "expo-tracking-transparency",
+    "@react-native-google-signin/google-signin"
+  ],
+  "expo": {
+    "android": {
+      "googleServicesFile": "./android/app/google-services.json",
+      "jsEngine": "jsc",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "ios": {
+      "googleServicesFile": "./ios/Instamobile/GoogleService-Info.plist",
+      "jsEngine": "jsc",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos"
+      }
+    },
+    "plugins": [
+      "expo-localization",
+      "expo-tracking-transparency"
+    ]
+  }
+}

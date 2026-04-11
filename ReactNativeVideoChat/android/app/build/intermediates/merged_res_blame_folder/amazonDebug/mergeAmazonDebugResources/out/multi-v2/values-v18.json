@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.instamobile.app-mergeAmazonDebugResources-76:/values-v18/values-v18.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Juan Casella\\.gradle\\caches\\8.14.3\\transforms\\1337beeb1087fb11b5966a784b099f5c\\transformed\\appcompat-1.7.1\\res\\values-v18\\values-v18.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "48",
+                        "endOffsets": "99"
+                    }
+                }
+            ]
+        }
+    ]
+}

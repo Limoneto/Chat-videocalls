@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.instamobile"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="24"
+        android:targetSdkVersion="36" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <queries>
+        <intent>
+            <action android:name="org.chromium.intent.action.PAY" />
+        </intent>
+        <intent>
+            <action android:name="org.chromium.intent.action.IS_READY_TO_PAY" />
+        </intent>
+        <intent>
+            <action android:name="org.chromium.intent.action.UPDATE_PAYMENT_DETAILS" />
+        </intent>
+        <intent>
+
+            <!-- Required for opening tabs if targeting API 30 -->
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent> <!-- Query open documents -->
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+        </intent>
+
+        <package android:name="com.facebook.katana" />
+
+        <intent>
+            <action android:name="androidx.camera.extensions.action.VENDOR_ACTION" />
+        </intent> <!-- Query open documents -->
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.OPENABLE" />
+
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!--
+    This manifest file is used only by Gradle to configure debug-only capabilities
+    for React Native Apps.
+    -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" /> <!-- Include required permissions for Advertising Id -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" /> <!-- Support for Google Privacy Sandbox adservices API -->
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_CUSTOM_AUDIENCE" />
+    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_TOPICS" />
+
+    <permission
+        android:name="io.instamobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="io.instamobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" /> <!-- for android -->
+    <!-- <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/> -->
+    <!-- <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/> -->
+    <!-- <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" /> -->
+    <!-- <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" /> -->
+    <!-- for Samsung -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for htc -->
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for sony -->
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" /> <!-- for apex -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" /> <!-- for solid -->
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" /> <!-- for huawei -->
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" /> <!-- for ZUK -->
+    <uses-permission android:name="android.permission.READ_APP_BADGE" /> <!-- for OPPO -->
+    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" /> <!-- for EvMe -->
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+
+    <application
+        android:name="io.instamobile.MainApplication"
+        android:allowBackup="false"
+        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+        android:debuggable="true"
+        android:extractNativeLibs="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true" >
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBI8oXdc-lbtvRxuVstY6eXG5G9FNCT4fU" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
+        <activity
+            android:name="io.instamobile.SplashActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="io.instamobile.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|uiMode"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@style/com_facebook_activity_theme" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="cct.io.instamobile"
+                    android:scheme="fbconnect" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+            android:exported="true" />
+
+        <provider
+            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
+            android:authorities="io.instamobile.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <service
+            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingHeadlessService"
+            android:exported="false" />
+        <service
+            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="delivery_metrics_exported_to_big_query_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="true" />
+        <meta-data
+            android:name="firebase_messaging_notification_delegation_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/white" />
+        <meta-data
+            android:name="app_data_collection_default_enabled"
+            android:value="true" />
+
+        <service
+            android:name="com.google.firebase.components.ComponentDiscoveryService"
+            android:directBootAware="true"
+            android:exported="false" >
+            <meta-data
+                android:name="com.google.firebase.components:io.invertase.firebase.app.ReactNativeFirebaseAppRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.firestore.FirebaseFirestoreKtxRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.functions.FirebaseFunctionsKtxRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.functions.FunctionsRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+        </service>
+
+        <provider
+            android:name="io.invertase.firebase.app.ReactNativeFirebaseAppInitProvider"
+            android:authorities="io.instamobile.reactnativefirebaseappinitprovider"
+            android:exported="false"
+            android:initOrder="99" />
+
+        <service
+            android:name="com.oney.WebRTCModule.MediaProjectionService"
+            android:foregroundServiceType="mediaProjection" >
+        </service>
+
+        <meta-data
+            android:name="org.unimodules.core.AppLoader#react-native-headless"
+            android:value="expo.modules.adapters.react.apploader.RNHeadlessAppLoader" />
+        <meta-data
+            android:name="com.facebook.soloader.enabled"
+            android:value="true" />
+
+        <provider
+            android:name="expo.modules.filesystem.FileSystemFileProvider"
+            android:authorities="io.instamobile.FileSystemFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_system_provider_paths" />
+        </provider>
+
+        <activity android:name="com.facebook.CustomTabMainActivity" />
+
+        <service
+            android:name="expo.modules.notifications.service.ExpoFirebaseMessagingService"
+            android:exported="false" >
+            <intent-filter android:priority="-1" >
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="expo.modules.notifications.service.NotificationsService"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter android:priority="-1" >
+                <action android:name="expo.modules.notifications.NOTIFICATION_EVENT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.REBOOT" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name="expo.modules.notifications.service.NotificationForwarderActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="standard"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <service
+            android:name="expo.modules.location.services.LocationTaskService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <activity
+            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="firebase.auth"
+                    android:path="/"
+                    android:scheme="genericidp" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="firebase.auth"
+                    android:path="/"
+                    android:scheme="recaptcha" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="androidx.credentials.playservices.CredentialProviderMetadataHolder"
+            android:enabled="true"
+            android:exported="false" >
+            <meta-data
+                android:name="androidx.credentials.CREDENTIAL_PROVIDER_KEY"
+                android:value="androidx.credentials.playservices.CredentialProviderPlayServicesImpl" />
+        </service>
+
+        <activity
+            android:name="androidx.credentials.playservices.HiddenActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:enabled="true"
+            android:exported="false"
+            android:fitsSystemWindows="true"
+            android:theme="@style/Theme.Hidden" >
+        </activity>
+        <activity
+            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <!--
+            Service handling Google Sign-In user revocation. For apps that do not integrate with
+            Google Sign-In, this service will never be started.
+        -->
+        <service
+            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+            android:exported="true"
+            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+            android:visibleToInstantApps="true" />
+
+        <receiver
+            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+                android:value="true" />
+        </receiver>
+        <!--
+             FirebaseMessagingService performs security checks at runtime,
+             but set to not exported to explicitly avoid allowing another app to call it.
+        -->
+        <service
+            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:directBootAware="true"
+            android:exported="false" >
+            <intent-filter android:priority="-500" >
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui" />
+        <!--
+        This activity is an invisible delegate activity to start scanner activity
+        and receive result, so it's unnecessary to support screen orientation and
+        we can avoid any side effect from activity recreation in any case.
+        -->
+        <activity
+            android:name="com.google.mlkit.vision.codescanner.internal.GmsBarcodeScanningDelegateActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <service
+            android:name="com.google.mlkit.common.internal.MlKitComponentDiscoveryService"
+            android:directBootAware="true"
+            android:exported="false" >
+            <meta-data
+                android:name="com.google.firebase.components:com.google.mlkit.vision.barcode.internal.BarcodeRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.mlkit.vision.common.internal.VisionCommonRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+            <meta-data
+                android:name="com.google.firebase.components:com.google.mlkit.common.internal.CommonComponentRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+        </service>
+
+        <provider
+            android:name="com.google.mlkit.common.internal.MlKitInitProvider"
+            android:authorities="io.instamobile.mlkitinitprovider"
+            android:exported="false"
+            android:initOrder="99" />
+
+        <activity
+            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <uses-library
+            android:name="androidx.camera.extensions.impl"
+            android:required="false" />
+
+        <service
+            android:name="androidx.camera.core.impl.MetadataHolderService"
+            android:enabled="false"
+            android:exported="false" >
+            <meta-data
+                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+        </service>
+
+        <meta-data
+            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+            android:value="GlideModule" />
+
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:authorities="io.instamobile.firebaseinitprovider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="100" />
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="io.instamobile.androidx-startup"
+            android:exported="false" >
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!--
+         The initialization ContentProvider will call FacebookSdk.sdkInitialize automatically
+         with the application context. This config is merged in with the host app's manifest,
+         but there can only be one provider with the same authority activated at any given
+         point; so if the end user has two or more different apps that use Facebook SDK, only the
+         first one will be able to use the provider. To work around this problem, we use the
+         following placeholder in the authority to identify each host application as if it was
+         a completely different provider.
+        -->
+        <provider
+            android:name="com.facebook.internal.FacebookInitProvider"
+            android:authorities="io.instamobile.FacebookInitProvider"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.facebook.CurrentAccessTokenExpirationBroadcastReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.facebook.sdk.ACTION_CURRENT_ACCESS_TOKEN_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.facebook.AuthenticationTokenManager$CurrentAuthenticationTokenChangedBroadcastReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.facebook.sdk.ACTION_CURRENT_AUTHENTICATION_TOKEN_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+            android:directBootAware="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.DUMP" >
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            android:exported="false" >
+            <meta-data
+                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+                android:value="cct" />
+        </service>
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+        </service>
+
+        <receiver
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            android:exported="false" /> <!-- The activities will be merged into the manifest of the hosting app. -->
+        <activity
+            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
+            android:exported="false"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.PlayCore.Transparent" />
+    </application>
+
+</manifest>

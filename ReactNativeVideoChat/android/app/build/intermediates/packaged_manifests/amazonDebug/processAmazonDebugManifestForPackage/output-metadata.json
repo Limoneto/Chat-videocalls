@@ -1,0 +1,46 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "PACKAGED_MANIFESTS",
+    "kind": "Directory"
+  },
+  "applicationId": "io.instamobile",
+  "variantName": "amazonDebug",
+  "elements": [
+    {
+      "type": "UNIVERSAL",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 1,
+      "versionName": "1.0",
+      "outputFile": "universal/AndroidManifest.xml"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 4194305,
+      "versionName": "1.0",
+      "outputFile": "x86_64/AndroidManifest.xml"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 3145729,
+      "versionName": "1.0",
+      "outputFile": "arm64-v8a/AndroidManifest.xml"
+    }
+  ],
+  "elementType": "File"
+}

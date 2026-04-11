@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_bg">#424242</color>
+    <color name="splashscreen_bg">#7349df</color>
+    <integer name="react_native_dev_server_port">8081</integer>
+    <string name="app_name">Instamobile</string>
+    <string name="default_web_client_id" translatable="false">1099201876026-8h5muvpa8d1hmii3mkidbge065t7is86.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1288726485109267</string>
+    <string name="facebook_client_token">d6e1669fa01421ca37003d8725923a66</string>
+    <string name="fb_login_protocol_scheme">fb1288726485109267</string>
+    <string name="gcm_defaultSenderId" translatable="false">1099201876026</string>
+    <string name="google_api_key" translatable="false">AIzaSyABq2WJNGXFZC2u-_9Z9SjWovSdmTe29ko</string>
+    <string name="google_app_id" translatable="false">1:1099201876026:android:4b016cc18c0171ff936503</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyABq2WJNGXFZC2u-_9Z9SjWovSdmTe29ko</string>
+    <string name="google_storage_bucket" translatable="false">development-69cdc.appspot.com</string>
+    <string name="project_id" translatable="false">development-69cdc</string>
+    <string name="react_native_dev_server_ip" translatable="false">172.26.0.1</string>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        
+        
+    </style>
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/splashscreen_bg</item>
+        <item name="android:background">@drawable/background_splash</item>
+    </style>
+</resources>

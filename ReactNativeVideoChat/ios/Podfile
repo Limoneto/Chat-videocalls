@@ -1,0 +1,91 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+prepare_react_native_project!
+
+platform :ios, '15.1'
+
+
+production = ENV["PRODUCTION"] == "1"
+
+require 'json'
+podfile_properties = JSON.parse(File.read('./Podfile.properties.json')) rescue {}
+
+target 'Instamobile' do
+  use_expo_modules!
+
+  # Explicitly include React Native pods to ensure headers are available
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTAppDelegate', :path => '../node_modules/react-native/Libraries/AppDelegate'
+
+  config = use_native_modules!
+
+  # Use static frameworks to avoid many module/header linkage issues
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :production => production,
+    :hermes_enabled => true,
+    :fabric_enabled => true,  # Explicitly disable new architecture to fix the crash
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # Single post_install that merges react_native_post_install and our custom fixes
+  post_install do |installer|
+    # Run RN's post install first (keeps autolinking fixes, Flipper setup, etc.)
+    react_native_post_install(installer)
+
+    installer.pods_project.targets.each do |target|
+      # Apply the CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES workaround
+      target.build_configurations.each do |config|
+        # Allow non-modular includes in framework modules (fixes non-modular-include-in-framework-module)
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+
+        # Ensure iOS deployment target is consistent
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+
+        # Ensure header search paths include React headers for all targets
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
+        config.build_settings['HEADER_SEARCH_PATHS'] << '"$(PODS_ROOT)/Headers/Public"'
+        config.build_settings['HEADER_SEARCH_PATHS'] << '"$(PODS_ROOT)/Headers/Public/React-Core"'
+        config.build_settings['HEADER_SEARCH_PATHS'] << '"$(PODS_ROOT)/Headers/Public/React-RCTAppDelegate"'
+      end
+
+      # If you need extra flags for specific pods, e.g., React-Core, handle them here
+      if target.name == 'React-Core'
+        target.build_configurations.each do |config|
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_ENABLE_INSPECTOR=1'
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_DEV=1'
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'RCT_REMOTE_PROFILE=1'
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'ENABLE_PACKAGER_CONNECTION=1'
+          # Keep header search additions for React-Core here also (redundant but safe)
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
+          config.build_settings['HEADER_SEARCH_PATHS'] << '"$(PODS_ROOT)/Headers/Public/React-Core"'
+          config.build_settings['HEADER_SEARCH_PATHS'] << '"$(PODS_ROOT)/Headers/Public/React-RCTAppDelegate"'
+        end
+      end
+    end
+
+    # If Expo's post_integrate needs to run extra patches, call it after we've made changes
+    begin
+      installer.pods_project.targets.each do |t|
+        # no-op placeholder in case you add per-target tweaks later
+      end
+    rescue => e
+      Pod::UI.warn e
+    end
+  end
+end

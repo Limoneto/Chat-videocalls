@@ -1,0 +1,1 @@
+export { useEntities } from './firebase'

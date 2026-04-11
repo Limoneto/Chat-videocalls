@@ -1,0 +1,24 @@
+diff --git a/node_modules/expo-file-system/src/ExpoFileSystem.ts b/node_modules/expo-file-system/src/ExpoFileSystem.ts
+index d6b3659..1eaffa8 100644
+--- a/node_modules/expo-file-system/src/ExpoFileSystem.ts
++++ b/node_modules/expo-file-system/src/ExpoFileSystem.ts
+@@ -1,8 +1,7 @@
+-import { NativeModule, requireNativeModule } from 'expo-modules-core';
+-
++   import { requireNativeModule } from 'expo-modules-core';
+ import type { Directory, File, DownloadOptions } from './ExpoFileSystem.types';
+ 
+-declare class ExpoFileSystemModule extends NativeModule {
++  type ExpoFileSystemModule = {
+   FileSystemDirectory: typeof Directory;
+   FileSystemFile: typeof File;
+   downloadFileAsync(
+@@ -17,6 +16,6 @@ declare class ExpoFileSystemModule extends NativeModule {
+   documentDirectory: string;
+   cacheDirectory: string;
+   bundleDirectory: string;
+-}
++};
+ 
+ export default requireNativeModule<ExpoFileSystemModule>('FileSystem');
+\ No newline at end of file
