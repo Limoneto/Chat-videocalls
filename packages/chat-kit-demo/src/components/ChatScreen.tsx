@@ -25,12 +25,16 @@ interface ChatScreenProps {
   channelID: string
   channelName: string
   participants: any[]
+  isAnonymous?: boolean
+  expiresAt?: number
 }
 
 export const ChatScreen: React.FC<ChatScreenProps> = ({
   channelID,
   channelName,
   participants,
+  isAnonymous = false,
+  expiresAt,
 }) => {
   const { user } = useChatContext()
   const router = useRouter()
@@ -45,6 +49,9 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
   const [recordingUsers, setRecordingUsers] = useState<string[]>([])
   const [showMembers, setShowMembers] = useState(false)
   const [profileUserId, setProfileUserId] = useState<string | null>(null)
+  const [showRevealMenu, setShowRevealMenu] = useState(false)
+  const [timeLeft, setTimeLeft] = useState<string | null>(null)
+  const [hasRequestedRevealAll, setHasRequestedRevealAll] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const markedRef = useRef<Set<string>>(new Set())
@@ -98,6 +105,60 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
     const unsubscribe = subscribeToRecording(channelID, user.id, setRecordingUsers)
     return () => unsubscribe()
   }, [channelID, user?.id])
+
+  // Timer de expiración para chats anónimos
+  useEffect(() => {
+    if (!isAnonymous || !expiresAt) return
+    const update = () => {
+      const remaining = expiresAt - Date.now()
+      if (remaining <= 0) {
+        setTimeLeft('Expirado')
+        router.push('/')
+        return
+      }
+      const mins = Math.floor(remaining / 60000)
+      const secs = Math.floor((remaining % 60000) / 1000)
+      setTimeLeft(`${mins}:${secs.toString().padStart(2, '0')}`)
+    }
+    update()
+    const interval = setInterval(update, 1000)
+    return () => clearInterval(interval)
+  }, [isAnonymous, expiresAt, router])
+
+  // Helper: obtener nombre a mostrar (anónimo o real)
+  const getDisplayName = (participant: any) => {
+    if (!isAnonymous) return [participant.firstName, participant.lastName].filter(Boolean).join(' ') || 'Desconocido'
+    if (participant.revealedIdentity) {
+      const real = [participant.firstName, participant.lastName].filter(Boolean).join(' ')
+      return `${participant.anonymousNickname} (${real})`
+    }
+    return participant.anonymousNickname || 'Anónimo'
+  }
+
+  // Mi participante anónimo
+  const myAnonParticipant = participants?.find((p: any) => p.id === user?.id)
+  const myNickname = myAnonParticipant?.anonymousNickname || user?.name
+  const hasRevealed = myAnonParticipant?.revealedIdentity || false
+
+  // Revelar mi identidad
+  const handleRevealMyIdentity = async () => {
+    await revealIdentity(channelID, user!.id)
+    setShowRevealMenu(false)
+  }
+
+  // Solicitar que todos revelen su identidad
+  const handleRequestRevealAll = async () => {
+    const msgID = `sys_${Date.now()}`
+    await sendMessage(channelID, {
+      senderID: 'system',
+      senderFirstName: 'Sistema',
+      content: `${myNickname} solicita que todos los participantes revelen su identidad`,
+      type: 'system' as any,
+      createdAt: Math.round(Date.now() / 1000).toString(),
+    })
+    setHasRequestedRevealAll(true)
+    setShowRevealMenu(false)
+  }
 
   // Auto-scroll
   useEffect(() => {
@@ -263,8 +324,10 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
 
-        <div onClick={() => otherParticipant && setProfileUserId(otherParticipant.id)} style={{ cursor: otherParticipant ? 'pointer' : 'default' }}>
-          {otherParticipant?.profilePictureURL ? (
+        <div onClick={() => !isAnonymous && otherParticipant && setProfileUserId(otherParticipant.id)} style={{ cursor: !isAnonymous && otherParticipant ? 'pointer' : 'default' }}>
+          {isAnonymous ? (
+            <div style={{ ...s.headerAvatar, background: 'linear-gradient(135deg, #6B7280, #374151)' }}>🎭</div>
+          ) : otherParticipant?.profilePictureURL ? (
             <img src={otherParticipant.profilePictureURL} alt="" style={s.headerAvatarImg} />
           ) : (
             <div style={s.headerAvatar}>{channelName.charAt(0).toUpperCase()}</div>
@@ -338,6 +401,50 @@ export const ChatScreen: React.FC<ChatScreenProps> = ({
               })}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Banner anónimo */}
+      {isAnonymous && (
+        <div style={s.anonBanner}>
+          <div style={s.anonBannerLeft}>
+            <span style={{ fontSize: 16 }}>🎭</span>
+            <div>
+              <span style={s.anonBannerTitle}>Chat anónimo</span>
+              <span style={s.anonBannerSub}>Sos <strong>{myNickname}</strong></span>
+            </div>
+          </div>
+          <div style={s.anonBannerRight}>
+            {timeLeft && <span style={s.anonTimer}>⏱ {timeLeft}</span>}
+            <button style={s.anonRevealBtn} onClick={() => setShowRevealMenu(!showRevealMenu)}>
+              {hasRevealed ? '✓ Revelado' : 'Revelar'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Menú de revelar identidad */}
+      {showRevealMenu && (
+        <div style={s.revealMenu}>
+          {!hasRevealed && (
+            <button style={s.revealOption} onClick={handleRevealMyIdentity}>
+              <span>👤</span>
+              <div>
+                <div style={{ fontWeight: 500 }}>Revelar mi identidad</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Los demás verán tu nombre y foto real</div>
+              </div>
+            </button>
+          )}
+          <button style={s.revealOption} onClick={handleRequestRevealAll} disabled={hasRequestedRevealAll}>
+            <span>👥</span>
+            <div>
+              <div style={{ fontWeight: 500 }}>{hasRequestedRevealAll ? 'Solicitud enviada' : 'Solicitar que todos se revelen'}</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Se envía un mensaje pidiendo que todos muestren su identidad</div>
+            </div>
+          </button>
+          <button style={{ ...s.revealOption, color: 'rgba(255,255,255,0.3)' }} onClick={() => setShowRevealMenu(false)}>
+            Cancelar
+          </button>
         </div>
       )}
 
@@ -579,6 +686,37 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: 10, fontWeight: 600, color: '#2A9D8F',
     padding: '2px 8px', borderRadius: 10,
     background: 'rgba(42,157,143,0.15)', border: '1px solid rgba(42,157,143,0.2)',
+  },
+  anonBanner: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '8px 16px', background: 'rgba(107,114,128,0.12)',
+    borderBottom: '1px solid rgba(107,114,128,0.15)',
+  },
+  anonBannerLeft: { display: 'flex', alignItems: 'center', gap: 8 },
+  anonBannerTitle: { fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.8)', display: 'block' },
+  anonBannerSub: { fontSize: 11, color: 'rgba(255,255,255,0.4)', display: 'block' },
+  anonBannerRight: { display: 'flex', alignItems: 'center', gap: 8 },
+  anonTimer: {
+    fontSize: 12, fontWeight: 600, color: '#FF453A',
+    background: 'rgba(255,69,58,0.1)', padding: '2px 8px', borderRadius: 8,
+    fontVariantNumeric: 'tabular-nums' as any,
+  },
+  anonRevealBtn: {
+    padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+    background: 'rgba(42,157,143,0.15)', border: '1px solid rgba(42,157,143,0.3)',
+    color: '#2A9D8F', cursor: 'pointer',
+  },
+  revealMenu: {
+    background: 'rgba(15,20,20,0.95)', backdropFilter: 'blur(20px)',
+    border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0 0 12px 12px',
+    padding: 8, display: 'flex', flexDirection: 'column' as any, gap: 4,
+  },
+  revealOption: {
+    display: 'flex', alignItems: 'center', gap: 10,
+    padding: '10px 12px', borderRadius: 8, border: 'none',
+    background: 'transparent', color: 'rgba(255,255,255,0.8)',
+    cursor: 'pointer', textAlign: 'left' as any, fontSize: 14,
+    width: '100%',
   },
   sendBtn: {
     width: 38, height: 38, borderRadius: 19, background: '#2A9D8F',

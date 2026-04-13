@@ -14,7 +14,7 @@ export const ConversationList: React.FC = () => {
   const [channels, setChannels] = useState<ChatChannel[]>([])
   const [search, setSearch] = useState('')
   const [showNewChat, setShowNewChat] = useState(false)
-  const [showGroupCreate, setShowGroupCreate] = useState(false)
+  const [showGroupCreate, setShowGroupCreate] = useState<false | 'group' | 'anon'>(false)
   const [groupName, setGroupName] = useState('')
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [availableUsers, setAvailableUsers] = useState<any[]>([])
@@ -63,7 +63,9 @@ export const ConversationList: React.FC = () => {
 
   const openChat = (ch: ChatChannel) => {
     const id = ch.id || ch.channelID
-    router.push(`/chat/${id}?name=${encodeURIComponent(getChannelName(ch))}&participants=${encodeURIComponent(JSON.stringify(ch.participants || []))}`)
+    const isAnon = (ch as any).isAnonymous ? '1' : '0'
+    const expiresAt = (ch as any).anonymousConfig?.expiresAt || ''
+    router.push(`/chat/${id}?name=${encodeURIComponent(getChannelName(ch))}&participants=${encodeURIComponent(JSON.stringify(ch.participants || []))}&anon=${isAnon}&expires=${expiresAt}`)
   }
 
   const handleCreateChat = async (other: any) => {
@@ -182,7 +184,7 @@ export const ConversationList: React.FC = () => {
             {!showGroupCreate ? (
               <>
                 <h3 style={s.modalTitle}>Nuevo chat</h3>
-                <div style={s.modalItem} onClick={() => setShowGroupCreate(true)}>
+                <div style={s.modalItem} onClick={() => setShowGroupCreate('group')}>
                   <div style={{ ...s.modalItemAvatar, background: 'linear-gradient(135deg, #2A9D8F, #A78BFA)' }}>👥</div>
                   <div>
                     <div style={s.modalItemName}>Nuevo grupo</div>
@@ -191,18 +193,7 @@ export const ConversationList: React.FC = () => {
                 </div>
 
                 {/* Chat anónimo */}
-                <div style={s.modalItem} onClick={async () => {
-                  if (!user || availableUsers.length === 0) { await loadUsers(); return }
-                  // Por ahora crea con el primer usuario disponible - en producción se seleccionaría
-                  const other = availableUsers[0]
-                  await createAnonymousChannel(
-                    { id: user.id, firstName: user.firstName, lastName: user.lastName },
-                    [{ id: other.id, firstName: other.firstName, lastName: other.lastName }],
-                    undefined,
-                    60, // expira en 60 minutos
-                  )
-                  setShowNewChat(false)
-                }}>
+                <div style={s.modalItem} onClick={() => setShowGroupCreate('anon' as any)}>
                   <div style={{ ...s.modalItemAvatar, background: 'linear-gradient(135deg, #6B7280, #374151)' }}>🎭</div>
                   <div>
                     <div style={s.modalItemName}>Chat anónimo</div>
@@ -230,7 +221,7 @@ export const ConversationList: React.FC = () => {
                   </div>
                 )}
               </>
-            ) : (
+            ) : showGroupCreate === 'group' ? (
               <>
                 <h3 style={s.modalTitle}>Nuevo grupo</h3>
                 <input style={s.modalInput} placeholder="Nombre del grupo" value={groupName} onChange={e => setGroupName(e.target.value)} />
@@ -255,6 +246,38 @@ export const ConversationList: React.FC = () => {
                     onClick={handleCreateGroup} disabled={!selectedUsers.length || !groupName.trim()}>
                     Crear ({selectedUsers.length})
                   </button>
+                </div>
+              </>
+            ) : (
+              /* Chat anónimo - seleccionar usuario */
+              <>
+                <h3 style={s.modalTitle}>🎭 Chat anónimo</h3>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>
+                  Ambos participantes tendrán un nickname aleatorio. Nadie verá tu nombre ni foto real hasta que decidas revelarte.
+                </p>
+                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginBottom: 8, textTransform: 'uppercase' as any, letterSpacing: 1 }}>Elegí con quién chatear</p>
+                <div style={{ maxHeight: 250, overflowY: 'auto' as any }}>
+                  {availableUsers.map(u => (
+                    <div key={u.id} style={s.modalItem} onClick={async () => {
+                      if (!user) return
+                      await createAnonymousChannel(
+                        { id: user.id, firstName: user.firstName, lastName: user.lastName },
+                        [{ id: u.id, firstName: u.firstName, lastName: u.lastName }],
+                        undefined,
+                        60,
+                      )
+                      setShowGroupCreate(false); setShowNewChat(false)
+                    }}>
+                      <div style={{ ...s.modalItemAvatar, background: 'linear-gradient(135deg, #6B7280, #374151)' }}>🎭</div>
+                      <div>
+                        <div style={s.modalItemName}>{[u.firstName, u.lastName].filter(Boolean).join(' ')}</div>
+                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Ambos serán anónimos por 1 hora</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+                  <button style={s.modalBtnSecondary} onClick={() => setShowGroupCreate(false)}>Volver</button>
                 </div>
               </>
             )}

@@ -11,6 +11,8 @@ function ChatContent() {
 
   const channelID = params.id as string
   const channelName = searchParams.get('name') || 'Chat'
+  const isAnonymous = searchParams.get('anon') === '1'
+  const expiresAt = searchParams.get('expires') ? parseInt(searchParams.get('expires')!) : undefined
   let participants: any[] = []
   try {
     participants = JSON.parse(searchParams.get('participants') || '[]')
@@ -21,6 +23,8 @@ function ChatContent() {
       channelID={channelID}
       channelName={channelName}
       participants={participants}
+      isAnonymous={isAnonymous}
+      expiresAt={expiresAt}
     />
   )
 }
